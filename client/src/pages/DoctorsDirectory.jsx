@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, SlidersHorizontal, MapPin, Stethoscope, ArrowUpDown } from 'lucide-react';
+import { Search, SlidersHorizontal, MapPin, ArrowUpDown } from 'lucide-react';
 import api from '../lib/api';
 import DoctorCard from '../components/DoctorCard';
 import { DoctorCardSkeleton } from '../components/Skeleton';
@@ -199,3 +199,4 @@ export const DoctorsDirectory = () => {
 };
 
 export default DoctorsDirectory;
+

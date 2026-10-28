@@ -18,9 +18,9 @@ import {
   Star,
   Mic,
   Camera,
-  Stethoscope,
 } from 'lucide-react';
 import api from '../lib/api';
+import StethoscopeIcon from '../components/StethoscopeIcon';
 import DoctorCard from '../components/DoctorCard';
 import ProductCard from '../components/ProductCard';
 import StepCard from '../components/StepCard';
@@ -243,7 +243,7 @@ export const Landing = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-paper rounded-clinic p-6 shadow-neumorph hover:shadow-neumorph-lg transition border border-mint/40">
             <div className="w-12 h-12 rounded-2xl bg-mint flex items-center justify-center text-forest mb-4">
-              <Stethoscope className="w-6 h-6" />
+              <StethoscopeIcon className="w-6 h-6" />
             </div>
             <h3 className="text-base font-extrabold text-ink mb-1">Qualified Doctors</h3>
             <p className="text-xs sm:text-sm text-sage leading-relaxed">

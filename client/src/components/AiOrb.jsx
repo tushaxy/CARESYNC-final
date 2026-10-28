@@ -7,7 +7,6 @@ import {
   Image as ImageIcon,
   Sparkles,
   AlertTriangle,
-  Stethoscope,
   Pill,
   ArrowRight,
   Plus,
@@ -420,3 +419,4 @@ export const AiOrb = () => {
 };
 
 export default AiOrb;
+

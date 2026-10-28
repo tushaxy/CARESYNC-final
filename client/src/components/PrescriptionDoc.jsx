@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Printer, ShoppingBag, PlusCircle, CheckCircle2, Calendar, User, Stethoscope } from 'lucide-react';
+import { Printer, ShoppingBag, PlusCircle, CheckCircle2, Calendar, User } from 'lucide-react';
+import StethoscopeIcon from './StethoscopeIcon';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { formatDate } from '../lib/format';
@@ -117,7 +118,7 @@ export const PrescriptionDoc = ({ prescription, doctor, user }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-5 rounded-2xl bg-mist/60 border border-mint/40 mb-8">
           <div>
             <div className="flex items-center gap-1.5 text-xs font-bold uppercase text-leaf mb-1">
-              <Stethoscope className="w-3.5 h-3.5" />
+              <StethoscopeIcon className="w-3.5 h-3.5" />
               <span>Prescribing Practitioner</span>
             </div>
             <h3 className="text-base font-bold text-ink">
@@ -246,3 +247,4 @@ export const PrescriptionDoc = ({ prescription, doctor, user }) => {
 };
 
 export default PrescriptionDoc;
+

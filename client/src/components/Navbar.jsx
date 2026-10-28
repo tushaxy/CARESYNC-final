@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingBag, User, Menu, X, Sparkles, LogOut, Calendar, Stethoscope, PlusCircle } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, Sparkles, LogOut, Calendar, PlusCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 
@@ -164,3 +164,4 @@ export const Navbar = () => {
 };
 
 export default Navbar;
+
