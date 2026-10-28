@@ -77,6 +77,25 @@ app.use('/api/medicines', medicinesRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/ai', aiRoutes);
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve compiled client assets if dist exists (e.g. unified deployment on Render/Railway/Heroku)
+const clientDistPath = path.join(__dirname, '../client/dist');
+app.use(express.static(clientDistPath));
+
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+  res.sendFile(path.join(clientDistPath, 'index.html'), (err) => {
+    if (err) next();
+  });
+});
+
 // Central error handler
 app.use(errorHandler);
 
