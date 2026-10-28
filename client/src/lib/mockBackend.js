@@ -158,13 +158,14 @@ function generateSlotsForDoctor(docId) {
 
     times.forEach((t, idx) => {
       const slotTime = new Date(`${dateStr}T${t}.000Z`);
-      // Only include if in the future or today afternoon
+      const isBooked = idx === 1 && dayOffset === 0;
       slots.push({
         _id: `slot_${docId}_${dayOffset}_${idx}`,
         id: `slot_${docId}_${dayOffset}_${idx}`,
         doctorId: docId,
         startsAt: slotTime.toISOString(),
-        status: idx === 1 && dayOffset === 0 ? 'booked' : 'available',
+        status: isBooked ? 'booked' : 'open',
+        isOpen: !isBooked,
       });
     });
   }
@@ -438,12 +439,18 @@ export async function handleMockRequest(config) {
 
   // POST /appointments
   if (method === 'post' && path === '/appointments') {
-    const { docId, slotISO, mode = 'video', note = '' } = body || {};
-    if (!docId || !slotISO) {
+    let { docId, slotISO, mode = 'video', note = '' } = body || {};
+    if (!docId) {
       return {
         status: 400,
-        data: { message: 'Doctor ID and Slot are required' },
+        data: { message: 'Doctor ID is required' },
       };
+    }
+
+    if (!slotISO) {
+      const fallbackSlots = generateSlotsForDoctor(docId);
+      const open = fallbackSlots.find((s) => s.status === 'open' || s.status === 'available');
+      slotISO = open ? open.startsAt : new Date().toISOString();
     }
 
     const doctor = doctorsSeed.find((d) => d.docId === docId);
@@ -1063,3 +1070,4 @@ export async function handleMockRequest(config) {
     data: { message: `Endpoint ${method.toUpperCase()} ${path} not found` },
   };
 }
+

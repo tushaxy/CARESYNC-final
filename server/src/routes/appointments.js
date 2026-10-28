@@ -12,10 +12,15 @@ const router = express.Router();
 // POST /api/appointments (JWT) {docId, slotISO, mode, note}
 router.post('/', protect, async (req, res, next) => {
   try {
-    const { docId, slotISO, mode = 'video', note = '' } = req.body;
+    let { docId, slotISO, mode = 'video', note = '' } = req.body;
 
-    if (!docId || !slotISO) {
-      return res.status(400).json({ message: 'Doctor ID and Slot are required' });
+    if (!docId) {
+      return res.status(400).json({ message: 'Doctor ID is required' });
+    }
+
+    if (!slotISO) {
+      const openSlot = await Slot.findOne({ doctorId: docId, status: { $ne: 'booked' } });
+      slotISO = openSlot ? openSlot.startsAt : new Date();
     }
 
     const doctor = await Doctor.findOne({ docId });

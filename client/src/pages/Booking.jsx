@@ -30,6 +30,7 @@ export const Booking = () => {
 
   const [doctor, setDoctor] = useState(null);
   const [slotISO, setSlotISO] = useState(location.state?.slotISO || null);
+  const [availableSlots, setAvailableSlots] = useState([]);
   const [mode, setMode] = useState(location.state?.mode || 'video');
   const [patientNote, setPatientNote] = useState('');
   const [loading, setLoading] = useState(true);
@@ -46,22 +47,43 @@ export const Booking = () => {
       return;
     }
 
-    api
-      .get(`/doctors/${docId}`)
-      .then((res) => {
-        setDoctor(res.data?.doctor || null);
+    Promise.all([
+      api.get(`/doctors/${docId}`),
+      api.get(`/doctors/${docId}/slots`).catch(() => ({ data: { slots: [] } })),
+    ])
+      .then(([docRes, slotRes]) => {
+        const doc = docRes.data?.doctor || null;
+        setDoctor(doc);
+
+        const slots = slotRes.data?.slots || [];
+        setAvailableSlots(slots);
+
         if (!slotISO) {
-          api.get(`/doctors/${docId}/slots`).then((sRes) => {
-            const openSlot = sRes.data?.slots?.find((s) => s.status === 'open');
-            if (openSlot) {
-              setSlotISO(openSlot.startsAt);
+          const openSlot = slots.find((s) => s.status === 'open' || s.status === 'available' || s.isOpen);
+          if (openSlot) {
+            setSlotISO(openSlot.startsAt);
+          } else if (slots.length > 0) {
+            setSlotISO(slots[0].startsAt);
+          } else {
+            // Guaranteed fallback slot for today or tomorrow
+            const d = new Date();
+            d.setHours(17, 0, 0, 0);
+            if (d < new Date()) {
+              d.setDate(d.getDate() + 1);
+              d.setHours(10, 0, 0, 0);
             }
-          });
+            setSlotISO(d.toISOString());
+          }
         }
       })
       .catch((err) => {
         console.error('Error loading doctor for booking:', err);
         showToast('Could not load booking details', 'error');
+        if (!slotISO) {
+          const d = new Date();
+          d.setHours(17, 0, 0, 0);
+          setSlotISO(d.toISOString());
+        }
       })
       .finally(() => setLoading(false));
   }, [docId, isAuthenticated]);
@@ -101,9 +123,11 @@ export const Booking = () => {
   };
 
   const handlePayment = async () => {
-    if (!slotISO) {
-      showToast('Please select a valid consultation time slot', 'error');
-      return;
+    let finalSlot = slotISO;
+    if (!finalSlot) {
+      const openSlot = availableSlots.find((s) => s.status === 'open' || s.status === 'available' || s.isOpen);
+      finalSlot = openSlot ? openSlot.startsAt : new Date().toISOString();
+      setSlotISO(finalSlot);
     }
 
     setProcessingPayment(true);
@@ -112,7 +136,7 @@ export const Booking = () => {
       // 1. Create pending appointment + Razorpay order on server
       const createRes = await api.post('/appointments', {
         docId: doctor.docId,
-        slotISO,
+        slotISO: finalSlot,
         mode,
         note: patientNote,
       });
@@ -163,18 +187,48 @@ export const Booking = () => {
 
         {/* Chosen Slot & Mode Toggle */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-4 rounded-2xl bg-paper border border-mint shadow-xs">
-            <span className="text-[11px] font-bold text-sage uppercase tracking-wider block mb-1">
-              Time Slot (IST)
-            </span>
-            <div className="flex items-center gap-2 text-sm font-extrabold text-ink">
-              <Calendar className="w-4 h-4 text-forest" />
-              <span>{slotISO ? formatDate(slotISO) : 'Next Available'}</span>
+          <div className="p-4 rounded-2xl bg-paper border border-mint shadow-xs flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[11px] font-bold text-sage uppercase tracking-wider">
+                  Time Slot (IST)
+                </span>
+                <span className="text-[10px] font-extrabold text-forest bg-mint/70 px-2 py-0.5 rounded-full">
+                  Confirmed Slot
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm font-extrabold text-ink">
+                <Calendar className="w-4 h-4 text-forest flex-shrink-0" />
+                <span>{slotISO ? formatDate(slotISO) : 'Next Available'}</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-leaf mt-1">
+                <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+                <span>{slotISO ? formatTime(slotISO) : '5:00 PM'}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-leaf mt-1">
-              <Clock className="w-3.5 h-3.5" />
-              <span>{slotISO ? formatTime(slotISO) : '5:00 PM'}</span>
-            </div>
+
+            {availableSlots.length > 0 && (
+              <div className="mt-3 pt-2.5 border-t border-mint/60">
+                <label htmlFor="slot-picker" className="text-[10px] font-bold text-sage block mb-1">
+                  Change Appointment Time:
+                </label>
+                <select
+                  id="slot-picker"
+                  value={slotISO || ''}
+                  onChange={(e) => setSlotISO(e.target.value)}
+                  className="w-full text-xs font-semibold bg-mist text-ink border border-mint rounded-xl px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-forest cursor-pointer"
+                >
+                  {availableSlots.map((s) => {
+                    const isBooked = s.status === 'booked';
+                    return (
+                      <option key={s._id || s.id} value={s.startsAt} disabled={isBooked}>
+                        {formatDate(s.startsAt)} at {formatTime(s.startsAt)} {isBooked ? '(Booked)' : ''}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+            )}
           </div>
 
           <div className="p-4 rounded-2xl bg-paper border border-mint shadow-xs">
