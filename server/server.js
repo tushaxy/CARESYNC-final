@@ -80,11 +80,21 @@ app.use('/api/ai', aiRoutes);
 // Central error handler
 app.use(errorHandler);
 
+import Doctor from './src/models/Doctor.js';
+import { seedDatabase } from './src/scripts/seed.js';
+
 const PORT = process.env.PORT || 5000;
 
-// Connect to database and start HTTP server
+// Connect to database, auto-seed if empty, and start HTTP server
 connectDB()
-  .then(() => {
+  .then(async () => {
+    // Check if database needs initial seeding
+    const docCount = await Doctor.countDocuments();
+    if (docCount === 0) {
+      console.log('[CareSync Server] Database has 0 doctors. Running automatic initial seed...');
+      await seedDatabase(false);
+    }
+
     app.listen(PORT, () => {
       console.log(`[CareSync Server] Running on http://localhost:${PORT}`);
       console.log(`[CareSync Server] Health check: http://localhost:${PORT}/api/health`);
@@ -94,3 +104,4 @@ connectDB()
     console.error('[CareSync Server] Failed to initialize database:', err);
     process.exit(1);
   });
+

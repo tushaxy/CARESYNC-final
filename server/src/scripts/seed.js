@@ -15,9 +15,8 @@ import ChatSession from '../models/ChatSession.js';
 import { doctorsSeed } from '../data/doctors.seed.js';
 import { medicinesSeed } from '../data/medicines.seed.js';
 
-async function seed() {
+export async function seedDatabase(shouldClose = false) {
   console.log('[Seeder] Starting CareSync database seed...');
-  await connectDB();
 
   // Clean existing collections for idempotency
   await Promise.all([
@@ -52,24 +51,19 @@ async function seed() {
   console.log(`[Seeder] Seeded 1 demo user: ${demoUser.email}`);
 
   // 4. Generate 7 days x 16 slots per doctor (deterministic UTC dates)
-  // 16 slots per day from 9:00 AM to 5:00 PM every 30 mins
   const slotsToInsert = [];
   const now = new Date();
-  // Start from today at 00:00:00 UTC
   const baseDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0));
 
   for (const doc of doctorsSeed) {
     for (let day = 0; day < 7; day++) {
-      // 9:00 AM to 5:00 PM IST is 3:30 AM to 11:30 AM UTC
       for (let hourIndex = 0; hourIndex < 16; hourIndex++) {
         const slotHour = 9 + Math.floor(hourIndex / 2);
         const slotMin = (hourIndex % 2) * 30;
-        // In IST: slotHour:slotMin. Subtract 5 hrs 30 mins for UTC
         const slotDate = new Date(baseDate);
         slotDate.setUTCDate(baseDate.getUTCDate() + day);
         slotDate.setUTCHours(slotHour - 5, slotMin - 30, 0, 0);
 
-        // Deterministically pre-book roughly 1 in every 8 slots
         const isPrebooked = (day * 16 + hourIndex) % 8 === 0;
 
         slotsToInsert.push({
@@ -133,11 +127,10 @@ async function seed() {
     demoIssued: true,
   });
 
-  // Link appointment to prescription
   completedAppt.prescriptionId = samplePrescription._id;
   await completedAppt.save();
 
-  // 6. Seed sample past pharmacy order for demo user so order history is populated
+  // 6. Seed sample past pharmacy order for demo user
   const sampleOrder = await Order.create({
     userId: demoUser._id,
     items: [
@@ -194,22 +187,21 @@ async function seed() {
   console.log(`[Seeder] Created completed appointment: ${completedAppt._id}`);
   console.log(`[Seeder] Created prescription: ${samplePrescription._id}`);
   console.log(`[Seeder] Created sample order: ${sampleOrder._id}`);
-  console.log('[Seeder] ========================================');
   console.log('[Seeder] Database Seed Completed Successfully!');
-  console.log('[Seeder] Summary:');
-  console.log(`[Seeder] - 25 Doctors`);
-  console.log(`[Seeder] - 24 Medicines`);
-  console.log(`[Seeder] - ${seededSlots.length} Appointment Slots`);
-  console.log(`[Seeder] - 1 Demo User (demo@caresync.in / Demo@123)`);
-  console.log(`[Seeder] - 1 Completed Video Appointment with Prescription`);
-  console.log(`[Seeder] - 1 Pharmacy Order (status: delivered)`);
-  console.log('[Seeder] ========================================');
 
-  await closeDB();
-  process.exit(0);
+  if (shouldClose) {
+    await closeDB();
+    process.exit(0);
+  }
 }
 
-seed().catch((err) => {
-  console.error('[Seeder] Fatal seed error:', err);
-  process.exit(1);
-});
+// If executed directly from CLI: node seed.js
+if (process.argv[1] && process.argv[1].endsWith('seed.js')) {
+  connectDB()
+    .then(() => seedDatabase(true))
+    .catch((err) => {
+      console.error('[Seeder] Fatal seed error:', err);
+      process.exit(1);
+    });
+}
+
