@@ -1,0 +1,267 @@
+export const medicinesSeed = [
+  {
+    sku: "MED-01",
+    name: "Dolo 650 (Paracetamol 650mg, strip of 15)",
+    brand: "Micro Labs",
+    category: "otc",
+    price: 34,
+    mrp: 36,
+    prescribedFor: ["fever", "body ache", "headache"],
+    stock: 250,
+    blurb: "Fast-acting relief for mild to moderate fever and generalized body aches."
+  },
+  {
+    sku: "MED-02",
+    name: "Cetirizine 10mg (strip of 10)",
+    brand: "Dr. Reddy's",
+    category: "otc",
+    price: 29,
+    mrp: 32,
+    prescribedFor: ["allergy", "itching", "sneezing", "rash"],
+    stock: 180,
+    blurb: "Non-sedating antihistamine for allergic rhinitis, skin urticaria, and itchy eyes."
+  },
+  {
+    sku: "MED-03",
+    name: "ORS Electrolyte Powder (10 sachets)",
+    brand: "Cipla Health",
+    category: "otc",
+    price: 110,
+    mrp: 120,
+    prescribedFor: ["dehydration", "vomiting", "loose motions", "hydration"],
+    stock: 220,
+    blurb: "WHO-standard oral rehydration salts for acute fluid and electrolyte replenishment."
+  },
+  {
+    sku: "MED-04",
+    name: "Gelusil Antacid Gel (200 ml)",
+    brand: "Pfizer",
+    category: "otc",
+    price: 128,
+    mrp: 140,
+    prescribedFor: ["acidity", "heartburn", "indigestion", "gas"],
+    stock: 140,
+    blurb: "Dual-action liquid antacid providing instant cooling relief from acid reflux."
+  },
+  {
+    sku: "MED-05",
+    name: "Cough Relief Syrup (150 ml)",
+    brand: "Dabur Honitus",
+    category: "otc",
+    price: 118,
+    mrp: 125,
+    prescribedFor: ["cough", "cold", "throat irritation"],
+    stock: 160,
+    blurb: "Non-drowsy herbal soothing syrup for both dry irritating and wet chesty coughs."
+  },
+  {
+    sku: "MED-06",
+    name: "Honey Ginger Lozenges (pack of 20)",
+    brand: "Himalaya Herbals",
+    category: "otc",
+    price: 48,
+    mrp: 50,
+    prescribedFor: ["throat irritation", "sore throat", "cough"],
+    stock: 300,
+    blurb: "Warm soothing lozenges enriched with natural forest honey and fresh ginger extracts."
+  },
+  {
+    sku: "MED-07",
+    name: "Calamine Lotion (100 ml)",
+    brand: "Lacto Calamine",
+    category: "otc",
+    price: 92,
+    mrp: 100,
+    prescribedFor: ["rash", "itching", "sunburn", "contact dermatitis"],
+    stock: 190,
+    blurb: "Gentle topical suspension providing cooling relief for rashes, insect bites, and allergic hives."
+  },
+  {
+    sku: "MED-08",
+    name: "Antiseptic Liquid (250 ml)",
+    brand: "Dettol",
+    category: "otc",
+    price: 99,
+    mrp: 110,
+    prescribedFor: ["cuts", "wound cleaning", "first aid"],
+    stock: 175,
+    blurb: "Proven first-aid disinfectant for cleansing scrapes, minor cuts, and sanitizing surfaces."
+  },
+  {
+    sku: "MED-09",
+    name: "Antiseptic Ointment (10 g)",
+    brand: "Betadine",
+    category: "otc",
+    price: 119,
+    mrp: 130,
+    prescribedFor: ["minor cuts", "infected scratches", "burns"],
+    stock: 130,
+    blurb: "Povidone-iodine based topical microbicidal ointment preventing infection in superficial wounds."
+  },
+  {
+    sku: "MED-10",
+    name: "Pain Relief Balm (25 g)",
+    brand: "Amrutanjan",
+    category: "otc",
+    price: 72,
+    mrp: 80,
+    prescribedFor: ["muscle pain", "headache", "sprains"],
+    stock: 210,
+    blurb: "Fast deep-penetrating balm formulated with wintergreen oil and menthol crystals."
+  },
+  {
+    sku: "MED-11",
+    name: "Band-Aid Assorted (pack of 20)",
+    brand: "Johnson & Johnson",
+    category: "otc",
+    price: 95,
+    mrp: 105,
+    prescribedFor: ["minor cuts", "blisters", "scrapes"],
+    stock: 240,
+    blurb: "Flexible sterile adhesive bandages with Quilt-Aid technology to protect minor abrasions."
+  },
+  {
+    sku: "MED-12",
+    name: "N95 Masks (pack of 5)",
+    brand: "3M Health",
+    category: "otc",
+    price: 249,
+    mrp: 299,
+    prescribedFor: ["dust", "pollution", "protection", "viral airborne"],
+    stock: 150,
+    blurb: "NIOSH-certified multi-layer protective face respirators filtering 95% of airborne particulates."
+  },
+  {
+    sku: "MED-13",
+    name: "Digital Infrared Thermometer",
+    brand: "Omron Healthcare",
+    category: "device",
+    price: 899,
+    mrp: 1299,
+    prescribedFor: ["fever monitoring", "temperature check"],
+    stock: 65,
+    blurb: "Non-contact forehead digital thermometer with 1-second rapid fever alarm reading."
+  },
+  {
+    sku: "MED-14",
+    name: "Fingertip Pulse Oximeter",
+    brand: "Beurer Medical",
+    category: "device",
+    price: 999,
+    mrp: 1499,
+    prescribedFor: ["SpO2 and pulse checks", "oxygen monitoring"],
+    stock: 70,
+    blurb: "OLED display pulse oximeter for accurate blood oxygen saturation and pulse rate tracking."
+  },
+  {
+    sku: "MED-15",
+    name: "Digital BP Monitor (upper arm)",
+    brand: "Omron",
+    category: "device",
+    price: 1899,
+    mrp: 2499,
+    prescribedFor: ["blood pressure tracking", "hypertension"],
+    stock: 45,
+    blurb: "Fully automatic upper arm blood pressure monitor with Intellisense technology and memory."
+  },
+  {
+    sku: "MED-16",
+    name: "Blood Glucose Monitor Kit (10 strips)",
+    brand: "Accu-Chek Active",
+    category: "device",
+    price: 1150,
+    mrp: 1550,
+    prescribedFor: ["blood sugar tracking", "diabetes monitoring"],
+    stock: 55,
+    blurb: "Complete starter glucometer kit with 10 testing strips and painless lancing device."
+  },
+  {
+    sku: "MED-17",
+    name: "Electric Heating Pad",
+    brand: "Flamingo Orthopedics",
+    category: "device",
+    price: 649,
+    mrp: 899,
+    prescribedFor: ["cramps", "joint stiffness", "backache", "muscle sprain"],
+    stock: 80,
+    blurb: "Therapeutic electric heat belt with 3-tier temperature controller for targeted pain relief."
+  },
+  {
+    sku: "MED-18",
+    name: "Vitamin D3 60K IU Drops (15 ml)",
+    brand: "Sun Pharma",
+    category: "wellness",
+    price: 180,
+    mrp: 210,
+    prescribedFor: ["vitamin D deficiency", "bone health"],
+    stock: 120,
+    blurb: "High-potency cholecalciferol oral solution supporting bone density and immune defense."
+  },
+  {
+    sku: "MED-19",
+    name: "Multivitamin Gummies (30 count)",
+    brand: "Power Gummies",
+    category: "wellness",
+    price: 349,
+    mrp: 449,
+    prescribedFor: ["daily nutrition", "energy", "vitality"],
+    stock: 135,
+    blurb: "Essential daily micronutrient blend with zinc, biotin, and vitamins A, C, D, E."
+  },
+  {
+    sku: "MED-20",
+    name: "Vitamin C Chewable Tablets (20 count)",
+    brand: "Limcee",
+    category: "wellness",
+    price: 99,
+    mrp: 120,
+    prescribedFor: ["immunity", "antioxidant", "skin health"],
+    stock: 260,
+    blurb: "Orange-flavored 500mg ascorbic acid chewable tablets strengthening everyday immunity."
+  },
+  {
+    sku: "MED-21",
+    name: "Moisturising Lotion (100 ml)",
+    brand: "Cetaphil",
+    category: "wellness",
+    price: 349,
+    mrp: 399,
+    prescribedFor: ["dry skin", "eczema care", "barrier repair"],
+    stock: 95,
+    blurb: "Dermatologist-recommended hypoallergenic daily lotion for sensitive and eczema-prone skin."
+  },
+  {
+    sku: "MED-22",
+    name: "Gentle Face Cleanser (150 ml)",
+    brand: "Sebamed",
+    category: "wellness",
+    price: 420,
+    mrp: 475,
+    prescribedFor: ["daily skin care", "acne", "sensitive skin"],
+    stock: 90,
+    blurb: "Soap-free pH 5.5 balanced facial wash preserving the natural protective acid mantle."
+  },
+  {
+    sku: "MED-23",
+    name: "Sunscreen Gel SPF 50 (50 g)",
+    brand: "Re'equil",
+    category: "wellness",
+    price: 299,
+    mrp: 349,
+    prescribedFor: ["sun protection", "UV defense", "anti-tanning"],
+    stock: 110,
+    blurb: "Broad-spectrum matte finish SPF 50 PA++++ oxybenzone-free non-comedogenic sunscreen gel."
+  },
+  {
+    sku: "MED-24",
+    name: "Aloe Vera Gel (200 ml)",
+    brand: "Forest Essentials",
+    category: "wellness",
+    price: 159,
+    mrp: 199,
+    prescribedFor: ["soothing skin", "minor burns", "hydration"],
+    stock: 140,
+    blurb: "Pure 99% cold-pressed aloe vera gel enriched with green tea extract for skin calming."
+  }
+];
+
