@@ -112,7 +112,7 @@ export const Register = () => {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Tushan Kumar"
+                  placeholder="e.g. Tushar Jeswani"
                   required
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl text-xs sm:text-sm bg-mist clinic-inset border-none focus:outline-none focus:ring-1 focus:ring-forest text-ink"
                 />
