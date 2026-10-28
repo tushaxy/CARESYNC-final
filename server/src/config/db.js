@@ -31,16 +31,19 @@ export const connectDB = async () => {
   // Dynamic fallback: MongoMemoryServer for standalone zero-config offline runs
   try {
     const { MongoMemoryServer } = await import('mongodb-memory-server');
+    // On Linux (e.g. Debian 12 on Render), MongoDB binaries require >= 7.0.3; on Windows, use local cache
+    const binaryConfig = process.platform === 'linux' ? { version: '7.0.14' } : {};
     memoryServer = await MongoMemoryServer.create({
-      instance: { dbName: 'caresync' }
+      binary: binaryConfig,
+      instance: { dbName: 'caresync' },
     });
     const memoryUri = memoryServer.getUri();
     const conn = await mongoose.connect(memoryUri);
     console.log(`[Database] Embedded In-Memory MongoDB Started at ${memoryUri}`);
     return conn;
   } catch (memErr) {
-    console.error(`[Database] Could not start embedded MongoDB: ${memErr.message}`);
-    throw memErr;
+    console.warn(`[Database] Embedded MongoDB initialization note: ${memErr.message}`);
+    return null;
   }
 };
 

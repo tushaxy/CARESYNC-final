@@ -103,24 +103,32 @@ import Doctor from './src/models/Doctor.js';
 import { seedDatabase } from './src/scripts/seed.js';
 
 const PORT = process.env.PORT || 5000;
+const HOST = '0.0.0.0';
 
-// Connect to database, auto-seed if empty, and start HTTP server
+// Start HTTP server immediately on 0.0.0.0:$PORT so cloud orchestrators (Render, Railway, Heroku) detect open port
+const server = app.listen(PORT, HOST, () => {
+  console.log(`[CareSync Server] Running on http://${HOST}:${PORT}`);
+  console.log(`[CareSync Server] Health check: http://${HOST}:${PORT}/api/health`);
+});
+
+// Connect to database asynchronously and seed if empty
 connectDB()
-  .then(async () => {
-    // Check if database needs initial seeding
-    const docCount = await Doctor.countDocuments();
-    if (docCount === 0) {
-      console.log('[CareSync Server] Database has 0 doctors. Running automatic initial seed...');
-      await seedDatabase(false);
+  .then(async (conn) => {
+    if (conn) {
+      try {
+        const docCount = await Doctor.countDocuments();
+        if (docCount === 0) {
+          console.log('[CareSync Server] Database has 0 doctors. Running automatic initial seed...');
+          await seedDatabase(false);
+        }
+      } catch (seedErr) {
+        console.warn('[CareSync Server] Auto-seed check note:', seedErr.message);
+      }
     }
-
-    app.listen(PORT, () => {
-      console.log(`[CareSync Server] Running on http://localhost:${PORT}`);
-      console.log(`[CareSync Server] Health check: http://localhost:${PORT}/api/health`);
-    });
   })
   .catch((err) => {
-    console.error('[CareSync Server] Failed to initialize database:', err);
-    process.exit(1);
+    console.warn('[CareSync Server] Database connection warning:', err.message);
   });
+
+export default app;
 
