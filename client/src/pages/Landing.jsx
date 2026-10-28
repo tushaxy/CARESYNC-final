@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Sparkles,
@@ -18,6 +18,8 @@ import {
   Star,
   Mic,
   Camera,
+  Loader2,
+  RotateCcw,
 } from 'lucide-react';
 import api from '../lib/api';
 import StethoscopeIcon from '../components/StethoscopeIcon';
@@ -33,6 +35,87 @@ export const Landing = () => {
   const [featuredDoctors, setFeaturedDoctors] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Hero AI Assistant Live Interactive State
+  const [heroInput, setHeroInput] = useState('');
+  const [heroLoading, setHeroLoading] = useState(false);
+  const heroChatEndRef = useRef(null);
+
+  const initialHeroMessages = [
+    {
+      id: 'user-0',
+      role: 'user',
+      text: 'I have this itchy rash on my arm since morning, attaching a photo.',
+      photoAttachment: 'arm_rash.jpg attached',
+    },
+    {
+      id: 'ai-0',
+      role: 'assistant',
+      isEmergency: false,
+      text: 'Analyzing your symptoms and skin presentation: likely localized contact irritation or mild allergic dermatitis.',
+      doctor: {
+        docId: 'doc-003',
+        name: 'Dr. Priya Sharma',
+        specialization: 'Dermatologist',
+        experienceYears: 9,
+        videoConsultFee: 350,
+        nextAvailableLabel: 'Today 6:00 PM',
+      },
+      tags: ['Prescription needed', 'Post-visit opinion', 'Second opinion'],
+    },
+  ];
+
+  const [heroMessages, setHeroMessages] = useState(initialHeroMessages);
+
+  const handleHeroSubmit = async (e, customText) => {
+    if (e) e.preventDefault();
+    const query = (typeof customText === 'string' ? customText : heroInput).trim();
+    if (!query) return;
+
+    const userMessage = {
+      id: 'user-' + Date.now(),
+      role: 'user',
+      text: query,
+    };
+
+    setHeroMessages((prev) => [...prev, userMessage]);
+    setHeroInput('');
+    setHeroLoading(true);
+
+    try {
+      const res = await api.post('/ai/triage', { text: query });
+      const data = res.data;
+      const matchedDoctor = data.doctors?.[0] || null;
+
+      const aiMessage = {
+        id: 'ai-' + Date.now(),
+        role: 'assistant',
+        isEmergency: data.triage === 'emergency' || data.emergency?.show,
+        text: data.summary || 'Based on your symptoms, here is our clinical evaluation.',
+        doctor: matchedDoctor,
+        tags: data.specialty ? [data.specialty, 'Verified Specialist', 'Online Consult'] : ['AI Triage', 'Clinical Guidance'],
+      };
+
+      setHeroMessages((prev) => [...prev, aiMessage]);
+    } catch (err) {
+      console.error('Landing hero triage error:', err);
+      setHeroMessages((prev) => [
+        ...prev,
+        {
+          id: 'ai-err-' + Date.now(),
+          role: 'assistant',
+          isEmergency: false,
+          text: 'I could not process triage at this moment. You can browse specialists directly in the directory below.',
+        },
+      ]);
+    } finally {
+      setHeroLoading(false);
+      setTimeout(() => {
+        heroChatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  };
+
 
   useEffect(() => {
     // Fetch doctors and medicines
@@ -111,7 +194,7 @@ export const Landing = () => {
               </div>
             </div>
 
-            {/* Right Hero: Floating Scripted AI Demo Card (Matches approved mockup) */}
+            {/* Right Hero: Interactive Working AI Assistant Card */}
             <div className="lg:col-span-5">
               <div className="bg-paper rounded-clinic-lg p-6 shadow-neumorph-lg border border-mint/60 relative">
                 {/* Demo Card Header */}
@@ -122,84 +205,171 @@ export const Landing = () => {
                     </div>
                     <div>
                       <h3 className="text-sm font-extrabold text-ink">CareSync AI</h3>
-                      <p className="text-[10px] text-sage">Live Symptom Intake Demo</p>
+                      <p className="text-[10px] text-sage">Live Symptom Intake Assistant</p>
                     </div>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-aiGlow text-white text-[10px] font-extrabold uppercase tracking-wider">
-                    DEMO
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setHeroMessages(initialHeroMessages)}
+                      className="p-1 rounded-full text-sage hover:text-forest transition"
+                      title="Reset conversation"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="px-2.5 py-0.5 rounded-full bg-forest text-limeChip text-[10px] font-extrabold uppercase tracking-wider">
+                      LIVE
+                    </span>
+                  </div>
                 </div>
 
-                {/* Scripted Chat Transcript */}
-                <div className="space-y-3 text-xs">
-                  {/* User message */}
-                  <div className="flex justify-end">
-                    <div className="bg-forest text-white p-3 rounded-2xl rounded-br-none max-w-[85%] leading-relaxed shadow-xs">
-                      <p>I have this itchy rash on my arm since morning, attaching a photo.</p>
-                      <span className="inline-block mt-1 px-2 py-0.5 rounded bg-white/20 text-[10px] font-mono">
-                        📎 arm_rash.jpg attached
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* AI response */}
-                  <div className="flex justify-start">
-                    <div className="bg-mist border border-mint p-3 rounded-2xl rounded-bl-none max-w-[90%] leading-relaxed shadow-xs">
-                      <div className="flex items-center gap-1.5 text-leaf font-bold mb-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>No emergency signs detected.</span>
-                      </div>
-                      <p className="text-ink">
-                        Analyzing your symptoms and skin presentation: likely localized contact irritation or mild allergic dermatitis.
-                      </p>
-
-                      {/* Doctor Recommendation Tile */}
-                      <div className="mt-3 p-3 bg-paper rounded-xl border border-mint shadow-xs flex items-center justify-between gap-2">
-                        <div className="min-w-0">
-                          <h4 className="font-bold text-xs text-ink truncate">Dr. Priya Sharma</h4>
-                          <p className="text-[10px] text-sage">Dermatologist • 9 yrs exp</p>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-[11px] font-bold text-forest">₹350</span>
-                            <span className="text-[10px] text-leaf font-semibold">Today 6:00 PM</span>
+                {/* Interactive Chat Stream */}
+                <div className="space-y-3 text-xs max-h-[320px] overflow-y-auto pr-1">
+                  {heroMessages.map((msg) => {
+                    if (msg.role === 'user') {
+                      return (
+                        <div key={msg.id} className="flex justify-end animate-in fade-in">
+                          <div className="bg-forest text-white p-3 rounded-2xl rounded-br-none max-w-[85%] leading-relaxed shadow-xs">
+                            <p>{msg.text}</p>
+                            {msg.photoAttachment && (
+                              <span className="inline-block mt-1 px-2 py-0.5 rounded bg-white/20 text-[10px] font-mono">
+                                📎 {msg.photoAttachment}
+                              </span>
+                            )}
                           </div>
                         </div>
-                        <Link
-                          to="/doctors/doc-003"
-                          className="px-3 py-1.5 rounded-full bg-forest text-white text-[11px] font-bold hover:bg-evergreen transition whitespace-nowrap shadow-xs"
-                        >
-                          Book Now
-                        </Link>
-                      </div>
+                      );
+                    }
 
-                      {/* Triage chips */}
-                      <div className="mt-2.5 flex flex-wrap gap-1">
-                        <span className="px-2 py-0.5 bg-mint text-forest text-[10px] font-semibold rounded-md">
-                          Prescription needed
-                        </span>
-                        <span className="px-2 py-0.5 bg-mint text-forest text-[10px] font-semibold rounded-md">
-                          Post-visit opinion
-                        </span>
-                        <span className="px-2 py-0.5 bg-mint text-forest text-[10px] font-semibold rounded-md">
-                          Second opinion
-                        </span>
-                      </div>
+                    return (
+                      <div key={msg.id} className="flex justify-start animate-in fade-in">
+                        <div className="bg-mist border border-mint p-3 rounded-2xl rounded-bl-none max-w-[90%] leading-relaxed shadow-xs">
+                          {msg.isEmergency ? (
+                            <div className="p-2.5 bg-red-100 border border-red-300 rounded-xl text-red-900 mb-2">
+                              <div className="flex items-center gap-1.5 font-bold text-red-700 mb-1">
+                                <AlertCircle className="w-3.5 h-3.5" />
+                                <span>CRITICAL: Emergency Signs Detected</span>
+                              </div>
+                              <p className="text-[11px] leading-snug mb-2">
+                                Please seek immediate emergency medical care. Call ambulance services without delay.
+                              </p>
+                              <a
+                                href="tel:112"
+                                className="inline-block px-3 py-1 bg-red-600 text-white rounded-full font-bold text-[11px] hover:bg-red-700"
+                              >
+                                Call 112 / 108 Emergency
+                              </a>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1.5 text-leaf font-bold mb-1">
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>No emergency signs detected.</span>
+                            </div>
+                          )}
 
-                      <span className="block mt-2 text-[10px] text-sage italic">
-                        AI guidance, not a medical diagnosis
-                      </span>
+                          <p className="text-ink">{msg.text}</p>
+
+                          {/* Doctor Recommendation Tile */}
+                          {msg.doctor && (
+                            <div className="mt-3 p-3 bg-paper rounded-xl border border-mint shadow-xs flex items-center justify-between gap-2">
+                              <div className="min-w-0">
+                                <h4 className="font-bold text-xs text-ink truncate">{msg.doctor.name}</h4>
+                                <p className="text-[10px] text-sage">
+                                  {msg.doctor.specialization} • {msg.doctor.experienceYears || 9} yrs exp
+                                </p>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                  <span className="text-[11px] font-bold text-forest">
+                                    {formatRupee(msg.doctor.videoConsultFee || 350)}
+                                  </span>
+                                  <span className="text-[10px] text-leaf font-semibold">
+                                    {msg.doctor.nextAvailableLabel || 'Today 6:00 PM'}
+                                  </span>
+                                </div>
+                              </div>
+                              <Link
+                                to={`/book/${msg.doctor.docId || 'doc-003'}`}
+                                className="px-3 py-1.5 rounded-full bg-forest text-white text-[11px] font-bold hover:bg-evergreen transition whitespace-nowrap shadow-xs"
+                              >
+                                Book Now
+                              </Link>
+                            </div>
+                          )}
+
+                          {/* Triage chips */}
+                          {msg.tags && msg.tags.length > 0 && (
+                            <div className="mt-2.5 flex flex-wrap gap-1">
+                              {msg.tags.map((tag, tIdx) => (
+                                <span
+                                  key={tIdx}
+                                  className="px-2 py-0.5 bg-mint text-forest text-[10px] font-semibold rounded-md"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          <span className="block mt-2 text-[10px] text-sage italic">
+                            AI guidance, not a medical diagnosis
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {heroLoading && (
+                    <div className="flex justify-start animate-pulse">
+                      <div className="bg-mist border border-mint p-3 rounded-2xl rounded-bl-none text-xs text-sage flex items-center gap-2">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-forest" />
+                        <span>CareSync AI is evaluating symptoms...</span>
+                      </div>
                     </div>
-                  </div>
+                  )}
+
+                  <div ref={heroChatEndRef} />
                 </div>
 
-                {/* Input prompt mockup */}
-                <div className="mt-4 pt-3 border-t border-mint flex items-center gap-2">
-                  <div className="flex-1 px-3 py-2 rounded-full bg-mist clinic-inset text-xs text-sage truncate">
-                    Describe your symptoms e.g. fever since morning...
-                  </div>
-                  <div className="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center">
-                    <Send className="w-3.5 h-3.5" />
-                  </div>
+                {/* Quick Symptom Chips */}
+                <div className="mt-2.5 flex flex-wrap gap-1">
+                  {[
+                    { label: '⚡ Fever & Headache', text: 'I have had a high fever and persistent headache since yesterday' },
+                    { label: '🧴 Skin Rash', text: 'I have an itchy red rash on my arm and neck' },
+                    { label: '💊 Acid Reflux', text: 'Severe heartburn and acid reflux after meals' },
+                    { label: '🦵 Joint Pain', text: 'Pain and swelling in my right knee joint for 4 days' },
+                  ].map((chip, cIdx) => (
+                    <button
+                      key={cIdx}
+                      type="button"
+                      onClick={() => handleHeroSubmit(null, chip.text)}
+                      className="px-2 py-0.5 rounded-full bg-mist hover:bg-mint text-forest text-[10px] font-semibold border border-mint/60 transition"
+                    >
+                      {chip.label}
+                    </button>
+                  ))}
                 </div>
+
+                {/* Interactive Working Input Form */}
+                <form onSubmit={handleHeroSubmit} className="mt-3 pt-3 border-t border-mint flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={heroInput}
+                    onChange={(e) => setHeroInput(e.target.value)}
+                    placeholder="Describe your symptoms e.g. fever since morning..."
+                    className="flex-1 px-4 py-2 rounded-full bg-mist clinic-inset text-xs text-ink focus:outline-none focus:ring-1 focus:ring-forest placeholder:text-sage"
+                  />
+                  <button
+                    type="submit"
+                    disabled={heroLoading || !heroInput.trim()}
+                    className="w-8 h-8 rounded-full bg-forest text-white flex items-center justify-center hover:bg-evergreen active:scale-95 transition disabled:opacity-40"
+                    title="Send symptom description"
+                  >
+                    {heroLoading ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Send className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                </form>
               </div>
             </div>
           </div>
