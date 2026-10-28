@@ -88,13 +88,12 @@ export const PrescriptionDoc = ({ prescription, doctor, user }) => {
         {/* Letterhead */}
         <div className="flex items-start justify-between border-b-2 border-forest/20 pb-6 mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-forest flex items-center justify-center text-white shadow-xs">
-              <PlusCircle className="w-7 h-7 text-limeChip stroke-[2.5]" />
-            </div>
+            <img
+              src="/logo.png"
+              alt="CareSync Healthcare"
+              className="h-12 w-auto object-contain"
+            />
             <div>
-              <h1 className="font-display font-extrabold text-2xl text-forest tracking-tight">
-                CareSync Healthcare
-              </h1>
               <p className="text-xs text-sage font-medium">
                 National Telemedicine & Digital Health Network
               </p>

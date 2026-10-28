@@ -9,13 +9,14 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-forest/80">
           {/* Col 1: Brand & ABHA badge */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-leaf flex items-center justify-center text-evergreen shadow-sm">
-                <PlusCircle className="w-5 h-5 text-white stroke-[2.5]" />
+            <div className="flex items-center gap-3">
+              <div className="bg-white/95 px-3 py-1.5 rounded-2xl shadow-sm inline-flex items-center">
+                <img
+                  src="/logo.png"
+                  alt="CareSync Logo"
+                  className="h-9 w-auto object-contain"
+                />
               </div>
-              <span className="font-display font-extrabold text-2xl text-white tracking-tight">
-                CareSync
-              </span>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-forest text-limeChip border border-leaf/30">
                 ABHA Compatible
               </span>

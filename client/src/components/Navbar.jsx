@@ -28,18 +28,15 @@ export const Navbar = () => {
     <header className="sticky top-0 z-40 bg-paper/95 backdrop-blur-md border-b border-mint/60 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         {/* Brand Logo */}
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="w-10 h-10 rounded-2xl bg-forest flex items-center justify-center text-white shadow-sm transition group-hover:scale-105">
-            <PlusCircle className="w-6 h-6 text-limeChip stroke-[2.5]" />
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="font-display font-extrabold text-2xl tracking-tight text-forest">
-              CareSync
-            </span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-limeChip text-forest border border-forest/10">
-              AI SYNC
-            </span>
-          </div>
+        <Link to="/" className="flex items-center gap-3 group">
+          <img
+            src="/logo.png"
+            alt="CareSync - AI Healthcare for a Brighter Tomorrow"
+            className="h-11 sm:h-12 w-auto object-contain transition duration-200 group-hover:scale-105"
+          />
+          <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-limeChip text-forest border border-forest/10">
+            AI SYNC
+          </span>
         </Link>
 
         {/* Desktop Navigation Links */}

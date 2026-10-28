@@ -89,19 +89,21 @@ export const RazorpayModal = ({
         <div className="bg-[#0c2340] text-white px-5 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* Razorpay Blue Logo Symbol */}
-            <div className="w-8 h-8 rounded-lg bg-[#0088cc] flex items-center justify-center shadow-md">
+            <div className="w-8 h-8 rounded-lg bg-[#0088cc] flex items-center justify-center shadow-md shrink-0">
               <svg viewBox="0 0 24 24" className="w-5 h-5 fill-white">
                 <path d="M13.976 2L8 14.5h4.848L10.024 22 16 9.5h-4.848z" />
               </svg>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-extrabold text-sm tracking-tight">CareSync Telemedicine</h3>
+                <span className="font-extrabold text-base tracking-tight text-white !text-white" style={{ color: '#ffffff' }}>
+                  CareSync Telemedicine
+                </span>
                 <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-widest bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
                   TEST MODE
                 </span>
               </div>
-              <p className="text-[11px] text-slate-300">
+              <p className="text-[11px] text-slate-200 !text-slate-200" style={{ color: '#e2e8f0' }}>
                 Dr. {doctorName?.replace('Dr. ', '')} • {orderId || 'Direct Payment'}
               </p>
             </div>
@@ -109,14 +111,16 @@ export const RazorpayModal = ({
 
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Total Amount</span>
-              <span className="text-lg font-extrabold text-emerald-400 tabular-nums">
+              <span className="text-[10px] text-slate-300 !text-slate-300 uppercase tracking-wider block" style={{ color: '#cbd5e1' }}>
+                Total Amount
+              </span>
+              <span className="text-xl font-extrabold text-emerald-400 tabular-nums">
                 {formatRupee(amountInRupees)}
               </span>
             </div>
             <button
               onClick={onClose}
-              className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition"
+              className="p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-white/10 transition"
               aria-label="Cancel Razorpay checkout"
             >
               <X className="w-5 h-5" />

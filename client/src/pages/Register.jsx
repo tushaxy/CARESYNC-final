@@ -53,14 +53,13 @@ export const Register = () => {
         {/* Left Mint Brand Panel */}
         <div className="md:col-span-5 bg-gradient-to-br from-mint via-mist to-mint/80 p-8 sm:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-mint">
           <div>
-            <div className="flex items-center gap-2.5 mb-8">
-              <div className="w-10 h-10 rounded-2xl bg-forest flex items-center justify-center text-white shadow-xs">
-                <PlusCircle className="w-6 h-6 text-limeChip stroke-[2.5]" />
-              </div>
-              <span className="font-display font-extrabold text-2xl text-forest tracking-tight">
-                CareSync
-              </span>
-            </div>
+            <Link to="/" className="inline-block mb-8 group">
+              <img
+                src="/logo.png"
+                alt="CareSync Logo"
+                className="h-12 w-auto object-contain transition duration-200 group-hover:scale-105"
+              />
+            </Link>
 
             <h2 className="text-2xl font-extrabold text-ink leading-tight mb-3">
               Join India's trusted telehealth network.
