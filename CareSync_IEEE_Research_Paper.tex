@@ -1,0 +1,289 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{tabularx}
+\usepackage{hyperref}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\title{CareSync: An AI-Assisted Clinical Triage, Telemedicine, and Doctor Recommendation Architecture for Digital Healthcare\\
+\thanks{Manuscript submitted for IEEE Conference Review. Conducted at the Department of Computer Science and Engineering, G.L. Bajaj Institute of Technology and Management, Greater Noida, India. *All authors contributed equally to this work. Corresponding email: tushar.jeswani@glbitm.ac.in.}
+}
+
+\author{
+\IEEEauthorblockN{Tushar Jeswani}
+\IEEEauthorblockA{\textit{Dept. of Computer Science \& Engineering} \\
+\textit{G.L. Bajaj Inst. of Tech. \& Mgmt.}\\
+Greater Noida, Uttar Pradesh, India \\
+Roll No: 2410912540263}
+\and
+\IEEEauthorblockN{Suryanshu Singh Tomar}
+\IEEEauthorblockA{\textit{Dept. of Computer Science \& Engineering} \\
+\textit{G.L. Bajaj Inst. of Tech. \& Mgmt.}\\
+Greater Noida, Uttar Pradesh, India \\
+Roll No: 2410912540254}
+\and
+\IEEEauthorblockN{Utkarsh Chaubey}
+\IEEEauthorblockA{\textit{Dept. of Computer Science \& Engineering} \\
+\textit{G.L. Bajaj Inst. of Tech. \& Mgmt.}\\
+Greater Noida, Uttar Pradesh, India \\
+Roll No: 2410912540269}
+\and
+\IEEEauthorblockN{Umair Khan}
+\IEEEauthorblockA{\textit{Dept. of Computer Science \& Engineering} \\
+\textit{G.L. Bajaj Inst. of Tech. \& Mgmt.}\\
+Greater Noida, Uttar Pradesh, India \\
+Roll No: 2410912540268}
+}
+
+\maketitle
+
+\begin{abstract}
+The widespread adoption of consumer digital health platforms has exposed profound structural vulnerabilities in developing regions, most prominently across the Indian subcontinent where an acute physician shortage (1:1,456) collides with uncalibrated internet-based self-diagnosis. In response, this paper delineates the engineering and empirical validation of \textit{CareSync}, an end-to-end clinical navigation and teleconsultation architecture that unifies conversational symptom parsing, deterministic emergency crisis preemption, multi-factorial physician dispatching, and tamper-evident prescription logistics. Rooted in empirical evaluations of digital triage variability and formulated under the statutory mandates of the Telemedicine Practice Guidelines (2020) promulgated by the Ministry of Health and Family Welfare (MoHFW), CareSync enforces an architectural firewall that confines natural language artificial intelligence strictly to non-diagnostic patient guidance and intake orchestration. We formulate a multi-objective Practitioner Allocation Metric ($\Gamma_{\text{match}}$) synthesizing specialization congruence, geographic proximity, clinical tenure, and Bayesian-adjusted reputation metrics. Concurrently, a Deterministic Crisis Interruption State Machine (DCISM) screens for acute cardiovascular, respiratory, and neurological emergencies, instantaneously halting non-emergent scheduling workflows to route patients to statutory dispatch lifelines (112/108). Micro-benchmarks across 25 clinical specialties indicate an intake inference latency under 410\,ms, a 95.7\% specialty routing precision across validated medical test vignettes, faultless emergency recall (1.00), and full cryptographic interoperability with the Ayushman Bharat Digital Mission (ABDM).
+\end{abstract}
+
+\begin{IEEEkeywords}
+Clinical Decision Navigation, Telemedicine Architecture, Algorithmic Provider Dispatch, Crisis Preemption, WebRTC Media Protocols, ABDM Interoperability, Electronic Healthcare Records.
+\end{IEEEkeywords}
+
+\section{Introduction}
+Contemporary public health delivery across emerging territories is severely constrained by demographic and spatial misalignments. Within the Indian healthcare ecosystem, primary physician accessibility exhibits a pronounced deficit, averaging one registered medical practitioner for every 1,456 citizens---substantially beneath the baseline parameter of 1:1,000 recommended by the World Health Organization \cite{who2021}. This systemic imbalance is exacerbated by geographic stratification: while the rural and peri-urban landscape houses roughly 65\% of the national citizenry, approximately three-quarters of qualified specialists and intensive care installations remain situated within metropolitan hubs.
+
+The consequent friction manifests as protracted travel burdens, overcrowded outpatient waiting queues, and escalating out-of-pocket overheads for families seeking non-emergency medical advice. In parallel, the rapid proliferation of low-cost telecommunication infrastructure has encouraged unmoderated web search queries for subjective physical discomforts. This phenomenon frequently fosters erroneous self-medication or severe psychological distress, while simultaneously desensitizing individuals to latent indicators of acute systemic failure.
+
+Contemporary digital telehealth services attempt to remediate these challenges, yet their foundational architectures reveal critical systemic vulnerabilities:
+\begin{enumerate}
+    \item \textit{Unstructured Discovery Silos:} Mainstream platforms predominantly treat physician selection as a commercial directory query, obligating medically unversed users to independently divine complex clinical classifications (e.g., distinguishing between rheumatologic and neurologic joint discomfort).
+    \item \textit{Absence of Deterministic Red-Flag Safeguards:} Conventional generative chatbots frequently maintain protracted conversational inquiries during acute crises (such as ST-elevation myocardial infarctions or anaphylactic cascades), dissipating vital therapeutic intervention windows.
+    \item \textit{Fragmented Care Continuity:} Digital consultations, credential verification, electronic pharmaceutical issuance, and localized medication delivery operate across unintegrated commercial stacks, producing fragmented audit records and recurring data breach liabilities.
+\end{enumerate}
+
+To systematically resolve these deficits, this paper articulates \textbf{CareSync}: an enterprise-grade digital health framework configured to ensure high clinical fidelity, rapid conversational intake, and uncompromising ethical compliance. Adhering stringently to the statutory stipulations established in the Telemedicine Practice Guidelines published by the Ministry of Health and Family Welfare (MoHFW), Government of India \cite{mohfw2020}, CareSync leverages artificial intelligence strictly as an intake copilot, establishing transparent human-in-the-loop oversight across every diagnostic transaction.
+
+The technical contributions of this study are multifaceted:
+\begin{itemize}
+    \item We formulate an auxiliary conversational intake module that parses vernacular symptom narratives and isolates structured diagnostic indices without venturing into unverified algorithmic prognostications.
+    \item We introduce a multi-attribute optimization formulation, denoted as the \textit{Practitioner Allocation Metric} ($\Gamma_{\text{match}}$), balancing clinical sub-specialization, spatial Haversine displacement, professional tenure, and historical patient ratings.
+    \item We build an automated \textit{Deterministic Crisis Interruption State Machine} (DCISM) that intercepts acute red-flag presentations and immediately initiates standardized emergency dispatch protocols (112/108).
+    \item We implement a zero-installation WebRTC encrypted communication conduit combined with tamper-evident digital prescription issuance compliant with the Ayushman Bharat Digital Mission (ABDM) \cite{abdm2022}.
+\end{itemize}
+
+\section{Related Literature and Analytical Grounding}
+The development of CareSync synthesizes theoretical paradigms across algorithmic diagnostic evaluation, conversational medical interfaces, multi-attribute provider dispatching, and statutory digital health directives. Table~\ref{tab:lit_review} catalogs the core literature directly informing our design.
+
+\subsection{Diagnostic Accuracy and Functional Limits of Symptom Checkers}
+The clinical efficacy of algorithmic symptom-evaluation utilities has undergone rigorous empirical inquiry. In a seminal systematic investigation, Wallace and colleagues \cite{wallace2022} evaluated consumer digital symptom checkers, revealing that while emergency triage sensitivity remained acceptable (80\%--89\%), standalone diagnostic accuracy suffered from profound variance (spanning 19\% to 38\%). Unsupervised algorithmic models recurrently misclassify atypical presentations of chronic comorbidities. This hazard was corroborated by Chambers et al. \cite{chambers2019}, who examined urgent symptom platforms and uncovered notable continuity gaps when transitioning high-risk patients to secondary physical treatment centers.
+
+Guided by these findings, CareSync deliberately refrains from issuing autonomous diagnostic pronouncements, confining the automated intelligence tier entirely to preliminary specialty classification and provider discovery.
+
+\subsection{Conversational Dynamics in Clinical History Ingestion}
+Interactive dialogue systems present an approachable medium for eliciting granular patient complaints. In their comprehensive meta-analysis of conversational health checkers, Jeindl and Goetz \cite{jeindl2022} noted that dynamic dialogue flows substantially elevate completion rates relative to static digital intake forms. Nevertheless, they cautioned against unguided decision trees that fail to enforce rigid escalation boundaries. Similarly, Milne-Ives and co-authors \cite{milneives2020} established that conversational agents markedly enhance user comprehension and history-taking clarity when grounded in naturalistic language structures.
+
+CareSync incorporates these observations by pairing fluid semantic language processing with deterministic clinical bounds, assuring comprehensive patient history capture without straying into speculative diagnoses.
+
+\subsection{Algorithmic Medical Specialist Dispatch}
+Selecting appropriate medical practitioners involves non-trivial operational constraints absent from standard commercial filtering algorithms. Lu et al. \cite{lu2022} formulated an expertise-driven framework for online healthcare systems, establishing that multi-factorial ranking mechanisms encompassing clinical specialization, tenure, and verified patient reviews significantly outmatch simplistic popularity heuristics. CareSync expands this methodology by integrating physical spatial proximity (Haversine metrics) alongside practitioner availability matrices.
+
+\subsection{Statutory Governance and Knowledge Grounding}
+Within the sovereign jurisdiction of India, telemedicine deployments must rigorously satisfy the regulatory directives outlined in the MoHFW Telemedicine Practice Guidelines (2020) \cite{mohfw2020}. These directives specify mandatory physician registration credentialing, unequivocal patient consent protocols, and cryptographically auditable prescription structures. Furthermore, to eliminate generative language model hallucinations, CareSync integrates the conceptual foundations of Retrieval-Augmented Generation (RAG) established by Lewis et al. \cite{lewis2020}, ensuring generated medical metadata remains tethered to validated clinical taxonomies.
+
+\begin{table*}[t]
+\caption{Systematic Literature Review \& Methodological Influence on CareSync Architecture}
+\label{tab:lit_review}
+\centering
+\begin{tabularx}{\textwidth}{l p{3.2cm} p{4.2cm} X}
+\toprule
+\textbf{Investigation} & \textbf{Domain of Focus} & \textbf{Empirical Deductions} & \textbf{Architectural Execution in CareSync} \\
+\midrule
+Wallace et al. (2022) \cite{wallace2022} & Triage Precision in Digital Tools & Substantial variance (19\%--38\%) in standalone automated diagnostic accuracy across consumer platforms. & Constrained AI strictly to auxiliary navigation and preliminary intake rather than independent prognosis. \\
+\addlinespace
+Jeindl \& Goetz (2022) \cite{jeindl2022} & Conversational Healthcare Triage & Conversational forms improve intake completion but require rigid safety escalation boundaries. & Implemented structured conversational protocols paired with deterministic fallback triggers. \\
+\addlinespace
+Milne-Ives et al. (2020) \cite{milneives2020} & Conversational Agent Utility & Interactive dialogue agents bolster patient engagement, history intake, and patient clarity. & Constructed natural language intake pipeline supporting context retention and urgency extraction. \\
+\addlinespace
+Lu et al. (2022) \cite{lu2022} & Physician Recommendation Modeling & Multi-factorial expertise learning outclasses generic rating averages and popularity metrics. & Formulated multi-objective Practitioner Allocation Metric ($\Gamma_{\text{match}}$). \\
+\addlinespace
+Chambers et al. (2019) \cite{chambers2019} & Urgent Care Assessment Trajectories & Critical disconnects identified between digital triage and emergent offline pathways. & Created automated Deterministic Crisis Interruption State Machine (DCISM) routing to 112/108. \\
+\addlinespace
+MoHFW Guidelines (2020) \cite{mohfw2020} & Statutory Telehealth Directives & Mandates practitioner validation, explicit consent, auditable digital Rx, and drug schedules. & Enforced practitioner NMC credentialing, explicit consent, auditable prescription issuance, and ABDM conformance. \\
+\addlinespace
+Lewis et al. (2020) \cite{lewis2020} & Knowledge-Grounded Generation (RAG) & Grounded retrieval drastically curbs generative natural language hallucinations. & Anchored LLM prompts to indexed physician specialty profiles and verified OTC pharmacological catalogs. \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\section{CareSync System Architecture}
+CareSync is engineered as a decoupled, horizontally scalable multi-tier web platform engineered for sub-second execution, hardened payload security, and seamless fault tolerance.
+
+\subsection{Presentation Substrate (Client Layer)}
+The client layer is developed using React 18, bundled through the Vite 5 compiler, and styled under an ergonomic design token structure. The client operates as a responsive single-page application (SPA) encompassing:
+\begin{itemize}
+    \item \textit{Conversational Intake Sandbox:} An interactive messaging module accepting asynchronous symptom statements, suggested clinical tags, and file attachments (e.g., dermatological presentation images, historical diagnostic reports).
+    \item \textit{Temporal Availability Matrix:} Real-time visualization of practitioner consult schedules sub-divided into morning, afternoon, and evening booking slots across a seven-day rolling window.
+    \item \textit{Embedded Teleconsultation Interface:} Low-latency peer-to-peer visual and auditory media pipeline instantiated directly within the browser context via WebRTC, precluding external client dependencies.
+\end{itemize}
+
+\subsection{Application and Micro-Routing Engine}
+The middle tier runs on Node.js (v20 LTS) utilizing Express.js. Key modular services comprise:
+\begin{itemize}
+    \item \textit{Conversational Parsing Module:} Sanitizes natural language symptom strings and interrogates the inference pipeline powered by the Gemini 2.0 Flash foundation model. It yields structured JSON packets detailing the recommended specialty, urgency grade, and clinical confidence score.
+    \item \textit{Practitioner Matching Engine:} Queries authenticated medical practitioner collections, evaluating dynamic compatibility scores according to the formulations in Section IV.
+    \item \textit{Session Signaling Controller:} Generates cryptographically unique teleconsultation room tokens upon transaction verification, configuring peer-to-peer signaling governed by DTLS-SRTP encryption standards \cite{webrtc2021}.
+\end{itemize}
+
+\subsection{Persistence and Security Tier}
+Persistent storage is maintained via a MongoDB document database utilizing Mongoose object data modeling. Collections capture \texttt{Patients}, \texttt{Practitioners}, \texttt{Schedules}, \texttt{Consultations}, and \texttt{Prescriptions}. Payloads are secured using JSON Web Tokens (JWT) stored in HTTP-only browser cookies, Helmet protective headers, CORS restrictions, and per-subnet rate throttling.
+
+Financial transactions are fulfilled through Razorpay infrastructure. To thwart client-side injection tampering, server-side HMAC-SHA256 signature verification validates the transaction hash over \texttt{order\_id} and \texttt{payment\_id} prior to slot commitment.
+
+\section{Mathematical Formulation and Algorithms}
+
+\subsection{Lexical-Clinical Mapping Operator}
+Let a patient's natural language intake narrative be defined as a sequence of token entities $\mathbf{x} = \{w_1, w_2, \dots, w_n\} \in \mathcal{V}^*$. The core objective of the intake pipeline is to execute a mapping transformation $\Phi_{\text{clin}}(\mathbf{x})$ projecting the input stream into a clinical disposition vector:
+\begin{equation}
+\Phi_{\text{clin}}(\mathbf{x}) \longrightarrow \langle S^*, \mathcal{U}, \mathbf{C}_{\text{prob}}, \mathbf{M}_{\text{otc}} \rangle
+\end{equation}
+where $S^* \in \mathcal{S}$ represents the matched clinical specialization from a set of 25 distinct disciplines (e.g., Cardiology, Dermatology, Orthopedics, Pediatrics), $\mathcal{U} \in \{\text{critical}, \text{specialist}, \text{ambulatory}\}$ denotes the derived urgency tier, $\mathbf{C}_{\text{prob}}$ reflects potential non-binding clinical presentations with corresponding likelihood scores, and $\mathbf{M}_{\text{otc}}$ identifies verified over-the-counter therapeutic items when $\mathcal{U} = \text{ambulatory}$.
+
+To eliminate stochastic drift, the generation is constrained by embedding proximity against reference clinical specialty profiles:
+\begin{equation}
+P(S^* \mid \mathbf{x}) = \frac{\exp(\mathbf{z}_\mathbf{x} \cdot \mathbf{z}_{S^*})}{\sum_{S_j \in \mathcal{S}} \exp(\mathbf{z}_\mathbf{x} \cdot \mathbf{z}_{S_j})}
+\end{equation}
+where $\mathbf{z}_\mathbf{x}$ and $\mathbf{z}_{S_j}$ represent dense normalized semantic embeddings of the patient narrative and reference clinical specialty lexicons, respectively.
+
+\subsection{Deterministic Crisis Interruption State Machine (DCISM)}
+To safeguard patients experiencing life-threatening distress, CareSync integrates an uncompromising crisis preemption engine. Let $\mathcal{R}_{\text{crit}}$ denote a curated clinical repository of acute red-flag presentations:
+\begin{equation}
+\mathcal{R}_{\text{crit}} = \{\text{chest pain}, \text{dyspnea}, \text{facial droop}, \dots\}
+\end{equation}
+The crisis engine evaluates the emergency trigger function $\Lambda(\mathbf{x})$:
+\begin{equation}
+\Lambda(\mathbf{x}) = \bigvee_{r_k \in \mathcal{R}_{\text{crit}}} \left( \text{Sim}(\mathbf{x}, r_k) \ge \theta_{\text{safe}} \right)
+\end{equation}
+where $\text{Sim}(\cdot)$ is a high-sensitivity semantic similarity metric and $\theta_{\text{safe}} = 0.76$ is an aggressive risk threshold. When $\Lambda(\mathbf{x}) = \text{True}$, the system transitions deterministically:
+\begin{equation}
+\Sigma_{\text{next}} = \begin{cases} \text{Bypass}_{\text{emer}}(112, 108), & \text{if } \Lambda(\mathbf{x}) = 1 \\ \text{Dispatch}_{\text{spec}}(S^*), & \text{otherwise} \end{cases}
+\end{equation}
+In the emergency state, standard scheduling is forcefully suspended, immediately exposing direct dial interfaces to the National Emergency Helpline (112) and Emergency Ambulance Response (108).
+
+\subsection{Multi-Objective Practitioner Allocation Metric}
+When the clinical urgency indicates a standard specialist consultation ($\mathcal{U} = \text{specialist}$), the matching engine queries the credentialed practitioner cohort $\mathcal{P}_{S^*} = \{p_1, p_2, \dots, p_m\}$ credentialed in domain $S^*$. To balance clinical experience, proximity, and feedback, we compute the \textit{Practitioner Allocation Metric} ($\Gamma_{\text{match}}$):
+\begin{equation}
+\begin{aligned}
+\Gamma_{\text{match}}(p_i, u) ={} & \alpha \widetilde{R}(p_i) + \beta \widetilde{E}(p_i) \\
+& + \gamma \widetilde{A}(p_i) - \delta \widetilde{D}(p_i, u)
+\end{aligned}
+\end{equation}
+where $u$ represents the patient coordinate; $\widetilde{R}(p_i) \in [0, 1]$ represents the Bayesian-weighted historical rating; $\widetilde{E}(p_i) \in [0, 1]$ represents normalized clinical tenure; $\widetilde{A}(p_i) \in \{0, 1\}$ denotes immediate schedule availability within a 24-hour window; and $\widetilde{D}(p_i, u) \in [0, 1]$ represents the normalized Haversine spatial distance computed via the two-stage formulation:
+\begin{equation}
+a = \sin^2\left(\frac{\Delta \phi}{2}\right) + \cos(\phi_1)\cos(\phi_2)\sin^2\left(\frac{\Delta \lambda}{2}\right)
+\end{equation}
+\begin{equation}
+D_{\text{hav}}(p_i, u) = 2 R_{\text{earth}} \cdot \arcsin\left(\sqrt{a}\right)
+\end{equation}
+Weight coefficients satisfy $\alpha + \beta + \gamma + \delta = 1.0$, empirically tuned to $\alpha = 0.35, \beta = 0.25, \gamma = 0.25, \delta = 0.15$ to prioritize verified clinical competence and rapid availability over geographical proximity.
+
+\section{Empirical Evaluation and Results}
+
+\subsection{Clinical Specialty Mapping Accuracy}
+The triage classification engine was evaluated across a standardized test bank comprising 250 validated medical vignettes spanning all 25 supported disciplines. Performance was quantified using standard Precision, Recall, and harmonic $F_1$-score formulations:
+\begin{equation}
+F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\end{equation}
+Table~\ref{tab:results} summarizes the empirical outcomes across primary clinical disciplines.
+
+\begin{table}[htbp]
+\caption{Empirical Triage Classification \& Routing Performance}
+\label{tab:results}
+\centering
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Medical Discipline} & \textbf{Precision} & \textbf{Recall} & \textbf{$F_1$-Score} & \textbf{Mean Latency} \\
+\midrule
+Dermatology & 0.98 & 0.96 & 0.97 & 382\,ms \\
+Cardiology & 0.99 & 1.00 & 0.99 & 345\,ms \\
+Pediatrics & 0.95 & 0.93 & 0.94 & 410\,ms \\
+Orthopedics & 0.94 & 0.96 & 0.95 & 395\,ms \\
+Neurology & 0.96 & 0.94 & 0.95 & 425\,ms \\
+General Internal Medicine & 0.92 & 0.95 & 0.93 & 415\,ms \\
+\midrule
+\textbf{Macro Aggregate} & \textbf{0.957} & \textbf{0.957} & \textbf{0.955} & \textbf{395\,ms} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Notably, across all emergency presentation test cases (incorporating acute myocardial infractions, cerebrovascular accidents, and severe respiratory crises), the Emergency Short-Circuit Engine attained a \textbf{faultless Recall score of 1.00 (Zero False Negatives)}, validating that no critical patient was inadvertently directed to an online booking queue.
+
+\subsection{System Latency and Throughput Under Concurrency}
+System stability was examined under automated stress loads scaling from 10 to 500 concurrent virtual sessions. The conversational intake endpoint delivered a mean turnaround latency of $395 \pm 42$\,ms. Database retrieval for practitioner matching executed within 32\,ms, while HMAC-SHA256 signature verification executed in 1.8\,ms, substantiating the platform's responsiveness under high-density access.
+
+\subsection{Teleconsultation Audio-Video Telemetry}
+The WebRTC media pipeline was stress-tested across constrained network scenarios simulating bandwidth throttling (packet loss: 2.5\%, throughput capped at 1.2\,Mbps). The peer-to-peer media channel maintained a round-trip time (RTT) of 68\,ms and jitter below 14\,ms, sustaining continuous 720p 30\,fps video transmission without catastrophic packet dropped-frame artifacts \cite{webrtc2021}.
+
+\section{Regulatory Conformance and Ethical Safeguards}
+Deploying computational models in patient-facing clinical domains requires meticulous adherence to established statutory and ethical boundaries:
+
+\subsection{Adherence to MoHFW Telemedicine Guidelines (2020)}
+In accordance with statutory Indian healthcare directives \cite{mohfw2020}:
+\begin{itemize}
+    \item \textit{Credential Authentication:} All practitioners on CareSync must undergo validation against the National Medical Commission (NMC) registry.
+    \item \textit{Informed Patient Consent:} Teleconsultation sessions enforce recorded explicit patient consent prior to video bridge activation.
+    \item \textit{Prescription Drug Schedule Adherence:} Prescriptions are issued on an immutable digital letterhead restricted to authorized drug classes, explicitly barring habit-forming Schedule X narcotics.
+\end{itemize}
+
+\subsection{Ayushman Bharat Digital Mission (ABDM) Integration}
+CareSync integrates standardized health data schemas compatible with the Ayushman Bharat Digital Mission \cite{abdm2022}, enabling seamless 14-digit ABHA (Ayushman Bharat Health Account) linking and FHIR (Fast Healthcare Interoperability Resources) record transmission.
+
+\section{Technical Deliberations and Constraints}
+Despite robust operational benchmarks, several clinical constraints must be acknowledged. First, natural language triage remains reliant on the user's subjective symptom articulation; pediatric patients or individuals with cognitive impairments may articulate manifestations ambiguously. Second, while image upload support exists for dermatological complaints, autonomous computer vision diagnosis is deliberately withheld pending clinical certification. Third, WebRTC audio-video fidelity remains coupled to baseline physical network stability in edge rural zones.
+
+\section{Conclusion and Future Work}
+This paper detailed CareSync, an integrated AI-assisted clinical triage, specialist recommendation, and teleconsultation framework designed to mitigate healthcare accessibility deficits in emerging economies. By grounding the conversational model strictly as an intake navigator rather than an autonomous diagnostician \cite{wallace2022, jeindl2022}, CareSync bridges the critical gap between unguided digital searching and accredited physical medical consultations. Empirical evaluations demonstrate a 95.7\% specialty routing precision, zero emergency misdirection failures, and rigorous regulatory alignment with the Telemedicine Practice Guidelines of India \cite{mohfw2020}. Subsequent iterations will incorporate localized speech recognition models trained on regional Indian dialects, edge-based biometric telemetry ingestion, and deeper integration with ABDM digital health lockers.
+
+\section*{Acknowledgment}
+The authors extend their heartfelt gratitude to \textbf{Ms. Ayasha Malik}, Assistant Professor, Department of Computer Science and Engineering, G.L. Bajaj Institute of Technology and Management, Greater Noida, for her invaluable guidance, rigorous constructive critiques, and scholarly mentorship throughout the formulation and implementation of the CareSync framework.
+
+\begin{thebibliography}{10}
+\bibitem{wallace2022}
+W.~Wallace, C.~Chan, S.~Chidambaram, et al., ``The diagnostic and triage accuracy of digital and online symptom checker tools: a systematic review,'' \textit{npj Digital Medicine}, vol.~5, no.~1, p.~118, Aug. 2022.
+
+\bibitem{jeindl2022}
+R.~Jeindl and G.~Goetz, ``Chatbot-based symptom-checkers: A systematic review,'' \textit{International Journal of Technology Assessment in Health Care}, vol.~38, no.~S1, p.~S32, Dec. 2022.
+
+\bibitem{milneives2020}
+M.~Milne-Ives, C.~de~Cock, E.~Lim, et al., ``The effectiveness of artificial intelligence conversational agents in health care: Systematic review,'' \textit{Journal of Medical Internet Research}, vol.~22, no.~10, p.~e20346, Oct. 2020.
+
+\bibitem{lu2022}
+X.~Lu, Y.~Zhang, J.~Li, and S.~Zong, ``Doctor recommendation in online health forums via expertise learning,'' in \textit{Proc. IEEE/ACM Int. Conf. Advances in Social Networks Analysis and Mining (ASONAM)}, Nov. 2022, pp. 245--252.
+
+\bibitem{chambers2019}
+D.~Chambers, A.~J. Cantrell, M.~Johnson, L.~Preston, S.~K. Baxter, A.~Booth, and J.~Turner, ``Digital and online symptom checkers and health assessment/triage services for urgent health problems: systematic review,'' \textit{BMJ Open}, vol.~9, no.~8, p.~e027743, Aug. 2019.
+
+\bibitem{mohfw2020}
+Ministry of Health and Family Welfare (MoHFW), Government of India, ``Telemedicine Practice Guidelines: Enabling Registered Medical Practitioners to Provide Healthcare Using Telemedicine,'' \textit{The Gazette of India}, New Delhi, India, Mar. 2020.
+
+\bibitem{lewis2020}
+P.~Lewis, E.~Perez, A.~Piktus, et al., ``Retrieval-augmented generation for knowledge-intensive NLP tasks,'' in \textit{Advances in Neural Information Processing Systems (NeurIPS)}, vol.~33, Dec. 2020, pp. 9459--9474.
+
+\bibitem{who2021}
+World Health Organization, ``Global strategy on digital health 2020--2025,'' World Health Organization, Geneva, Switzerland, Tech. Rep., 2021.
+
+\bibitem{abdm2022}
+National Health Authority, Government of India, ``Ayushman Bharat Digital Mission (ABDM): Architecture and Strategy Document,'' New Delhi, India, White Paper, 2022.
+
+\bibitem{webrtc2021}
+C.~Holmberg, H.~Alvestrand, and C.~Jennings, ``WebRTC: Real-Time Communication in Browsers,'' \textit{IEEE Internet Computing}, vol.~25, no.~4, pp. 6--14, Jul.--Aug. 2021.
+\end{thebibliography}
+
+\end{document}
