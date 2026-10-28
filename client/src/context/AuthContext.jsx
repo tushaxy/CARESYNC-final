@@ -5,8 +5,14 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('caresync_token') || null);
-  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(() => {
+    try {
+      return localStorage.getItem('caresync_token') || null;
+    } catch {
+      return null;
+    }
+  });
+  const [loading, setLoading] = useState(false);
 
   // Check existing session
   useEffect(() => {
@@ -80,3 +86,4 @@ export const useAuth = () => {
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
 };
+

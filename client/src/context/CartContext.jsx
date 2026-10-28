@@ -6,7 +6,8 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(() => {
     try {
       const saved = localStorage.getItem('caresync_cart');
-      return saved ? JSON.parse(saved) : [];
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
     }
@@ -91,3 +92,4 @@ export const useCart = () => {
   if (!ctx) throw new Error('useCart must be used within CartProvider');
   return ctx;
 };
+

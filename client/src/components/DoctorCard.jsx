@@ -8,13 +8,16 @@ import { formatRupee } from '../lib/format';
 export const DoctorCard = ({ doctor, className = '' }) => {
   const navigate = useNavigate();
 
+  if (!doctor) return null;
+
   // Extract initials
-  const initials = doctor.name
+  const initials = (doctor.name || 'Doctor')
     .replace('Dr. ', '')
     .split(' ')
+    .filter(Boolean)
     .map((n) => n[0])
     .slice(0, 2)
-    .join('');
+    .join('') || 'DR';
 
   const hue = doctor.avatarHue || 145;
 
@@ -118,3 +121,4 @@ export const DoctorCard = ({ doctor, className = '' }) => {
 };
 
 export default DoctorCard;
+

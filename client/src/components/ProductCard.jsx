@@ -6,6 +6,8 @@ import { formatRupee } from '../lib/format';
 export const ProductCard = ({ product, className = '' }) => {
   const { cartItems, addToCart, updateQty } = useCart();
 
+  if (!product) return null;
+
   const cartEntry = cartItems.find((i) => i.sku === product.sku);
   const qty = cartEntry ? cartEntry.qty : 0;
 
@@ -101,3 +103,4 @@ export const ProductCard = ({ product, className = '' }) => {
 };
 
 export default ProductCard;
+
