@@ -27,3 +27,4 @@ const chatSessionSchema = new mongoose.Schema(
 );
 
 export default mongoose.model('ChatSession', chatSessionSchema);
+

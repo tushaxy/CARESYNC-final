@@ -264,3 +264,4 @@ export const medicinesSeed = [
     blurb: "Pure 99% cold-pressed aloe vera gel enriched with green tea extract for skin calming."
   }
 ];
+

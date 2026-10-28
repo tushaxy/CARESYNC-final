@@ -44,3 +44,4 @@ export const EmergencyBanner = ({ message, numbers = ['112', '108'], className =
 };
 
 export default EmergencyBanner;
+

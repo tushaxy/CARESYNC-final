@@ -15,3 +15,4 @@ export const SoftCard = ({ children, className = '', hover = true, onClick, ...p
 };
 
 export default SoftCard;
+

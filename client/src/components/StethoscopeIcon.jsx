@@ -19,3 +19,4 @@ export const StethoscopeIcon = ({ className = 'w-6 h-6', ...props }) => (
 );
 
 export default StethoscopeIcon;
+

@@ -127,3 +127,4 @@ export const Pharmacy = () => {
 };
 
 export default Pharmacy;
+

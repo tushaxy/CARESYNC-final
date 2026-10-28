@@ -343,3 +343,4 @@ export async function processTriage({ text, imageUrl, base64Image, mimeType, lat
 
   return responseData;
 }
+

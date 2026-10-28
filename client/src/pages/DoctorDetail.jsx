@@ -379,3 +379,4 @@ export const DoctorDetail = () => {
 };
 
 export default DoctorDetail;
+

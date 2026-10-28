@@ -62,3 +62,4 @@ export const Prescription = () => {
 };
 
 export default Prescription;
+

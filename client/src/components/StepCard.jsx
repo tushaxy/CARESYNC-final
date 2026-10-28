@@ -26,3 +26,4 @@ export const StepCard = ({ numeral, icon: Icon, title, description }) => {
 };
 
 export default StepCard;
+

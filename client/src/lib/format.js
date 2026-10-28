@@ -32,3 +32,4 @@ export const formatDateTime = (dateInput) => {
   if (!dateInput) return '';
   return `${formatDate(dateInput)} at ${formatTime(dateInput)}`;
 };
+

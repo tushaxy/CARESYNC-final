@@ -78,3 +78,4 @@ const doctorSchema = new mongoose.Schema(
 );
 
 export default mongoose.model('Doctor', doctorSchema);
+

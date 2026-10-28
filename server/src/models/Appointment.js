@@ -57,3 +57,4 @@ const appointmentSchema = new mongoose.Schema(
 );
 
 export default mongoose.model('Appointment', appointmentSchema);
+

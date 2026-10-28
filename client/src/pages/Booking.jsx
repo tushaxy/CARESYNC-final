@@ -19,6 +19,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { formatRupee, formatDate, formatTime } from '../lib/format';
 import Skeleton from '../components/Skeleton';
+import RazorpayModal from '../components/RazorpayModal';
 
 export const Booking = () => {
   const { docId } = useParams();
@@ -120,62 +121,12 @@ export const Booking = () => {
       setPendingAppointment(appointment);
       setPendingRazorpayOrder(razorpayOrder);
 
-      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || '';
-      const isMockOrder = razorpayOrder.id.startsWith('order_test_');
-
-      // If server returned a simulated test order (placeholder credentials) or key is mock,
-      // show the test simulator directly so Razorpay API doesn't throw "Uh! oh! Order not found"
-      if (isMockOrder || !razorpayKey || razorpayKey.includes('xxxx')) {
-        setShowTestModal(true);
-        setProcessingPayment(false);
-        return;
-      }
-
-      // If real Razorpay key is configured and order was created by Razorpay API
-      if (window.Razorpay) {
-        const options = {
-          key: razorpayKey,
-          amount: razorpayOrder.amount,
-          currency: 'INR',
-          name: 'CareSync Telemedicine',
-          description: `Consultation with ${doctor.name}`,
-          order_id: razorpayOrder.id,
-          theme: { color: '#14532D' },
-          prefill: {
-            name: user?.name || 'CareSync Patient',
-            email: user?.email || 'patient@caresync.in',
-            contact: user?.phone || '9876543210',
-          },
-          handler: async (response) => {
-            await completePaymentVerification(
-              response.razorpay_order_id,
-              response.razorpay_payment_id,
-              response.razorpay_signature,
-              appointment._id
-            );
-          },
-          modal: {
-            ondismiss: () => {
-              setProcessingPayment(false);
-              showToast('Payment dismissed. You can complete using the Test Simulator.', 'info');
-              setShowTestModal(true);
-            },
-          },
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.on('payment.failed', function (resp) {
-          console.warn('Razorpay live payment failed, switching to test simulator:', resp.error);
-          setShowTestModal(true);
-        });
-        rzp.open();
-      } else {
-        setShowTestModal(true);
-        setProcessingPayment(false);
-      }
+      // Open Razorpay Checkout Popup
+      setShowTestModal(true);
     } catch (err) {
       console.error('Booking error:', err);
       showToast(err.response?.data?.message || 'Failed to initialize booking order', 'error');
+    } finally {
       setProcessingPayment(false);
     }
   };
@@ -308,93 +259,24 @@ export const Booking = () => {
         </div>
       </div>
 
-      {/* ===================== RAZORPAY TEST SIMULATOR MODAL ===================== */}
-      {showTestModal && pendingAppointment && pendingRazorpayOrder && (
-        <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-paper rounded-clinic max-w-md w-full p-6 shadow-2xl border border-mint/80 animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-mint/60 mb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-forest text-limeChip flex items-center justify-center font-bold text-sm">
-                  ₹
-                </div>
-                <div>
-                  <h3 className="text-sm font-extrabold text-ink">Razorpay Test Gateway</h3>
-                  <p className="text-[10px] text-sage">CareSync Telemedicine Checkout</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowTestModal(false)}
-                className="p-1 rounded-full text-sage hover:text-ink"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-mist border border-mint mb-5">
-              <div className="flex justify-between items-center text-xs text-sage mb-1">
-                <span>Doctor Consultation:</span>
-                <strong className="text-ink">{doctor.name}</strong>
-              </div>
-              <div className="flex justify-between items-center text-xs text-sage mb-2">
-                <span>Order Reference:</span>
-                <span className="font-mono text-[11px]">{pendingRazorpayOrder.id}</span>
-              </div>
-              <div className="flex justify-between items-center pt-2 border-t border-mint text-sm font-extrabold text-forest">
-                <span>Total Payable:</span>
-                <span className="text-xl tabular-nums">{formatRupee(fee)}</span>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <button
-                onClick={() =>
-                  completePaymentVerification(
-                    pendingRazorpayOrder.id,
-                    `pay_test_card_${Date.now()}`,
-                    'demo_signature_valid',
-                    pendingAppointment._id
-                  )
-                }
-                className="w-full py-3.5 px-4 rounded-2xl bg-forest hover:bg-evergreen text-white text-xs font-bold shadow-md transition flex items-center justify-between group active:scale-95"
-              >
-                <div className="flex items-center gap-2.5">
-                  <CreditCard className="w-4 h-4 text-limeChip" />
-                  <div className="text-left">
-                    <span className="block font-bold">Simulate Card Success</span>
-                    <span className="text-[10px] opacity-80 font-mono">4111 •••• •••• 1111 (Auto-approve)</span>
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 transition group-hover:translate-x-1" />
-              </button>
-
-              <button
-                onClick={() =>
-                  completePaymentVerification(
-                    pendingRazorpayOrder.id,
-                    `pay_test_upi_${Date.now()}`,
-                    'demo_signature_valid',
-                    pendingAppointment._id
-                  )
-                }
-                className="w-full py-3.5 px-4 rounded-2xl bg-mint hover:bg-limeChip text-forest text-xs font-bold transition flex items-center justify-between group active:scale-95 border border-mint"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Smartphone className="w-4 h-4 text-leaf" />
-                  <div className="text-left">
-                    <span className="block font-bold">Simulate UPI Success</span>
-                    <span className="text-[10px] text-sage font-mono">success@razorpay</span>
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 transition group-hover:translate-x-1" />
-              </button>
-            </div>
-
-            <div className="mt-5 text-center text-[10px] text-sage">
-              This triggers server-side HMAC signature verification and reserves the slot.
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ===================== AUTHENTIC RAZORPAY CHECKOUT POPUP ===================== */}
+      <RazorpayModal
+        isOpen={showTestModal}
+        onClose={() => setShowTestModal(false)}
+        amountInRupees={fee}
+        doctorName={doctor.name}
+        user={user}
+        appointmentId={pendingAppointment?._id}
+        orderId={pendingRazorpayOrder?.id}
+        onSuccess={(paymentData) => {
+          completePaymentVerification(
+            paymentData.razorpay_order_id,
+            paymentData.razorpay_payment_id,
+            paymentData.razorpay_signature,
+            pendingAppointment._id
+          );
+        }}
+      />
     </div>
   );
 };

@@ -144,3 +144,4 @@ router.get('/:docId', async (req, res, next) => {
 });
 
 export default router;
+

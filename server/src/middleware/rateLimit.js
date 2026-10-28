@@ -15,3 +15,4 @@ export const aiTriageLimiter = rateLimit({
   legacyHeaders: false,
   message: { message: 'Too many symptom triage requests, please slow down' },
 });
+

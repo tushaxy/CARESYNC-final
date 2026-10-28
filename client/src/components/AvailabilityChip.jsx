@@ -12,3 +12,4 @@ export const AvailabilityChip = ({ label = 'Today Available', className = '' }) 
 };
 
 export default AvailabilityChip;
+

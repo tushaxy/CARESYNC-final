@@ -51,3 +51,4 @@ const medicineSchema = new mongoose.Schema(
 );
 
 export default mongoose.model('Medicine', medicineSchema);
+
