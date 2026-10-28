@@ -18,6 +18,7 @@ import {
   Star,
   Mic,
   Camera,
+  Stethoscope,
 } from 'lucide-react';
 import api from '../lib/api';
 import DoctorCard from '../components/DoctorCard';
@@ -578,3 +579,4 @@ export const Landing = () => {
 };
 
 export default Landing;
+
